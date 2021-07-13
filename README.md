@@ -1,4 +1,9 @@
 export GITHUB_TOKEN=token
+
+az login
+
+az aks get-credentials --resource-group kluster1 --name aks
+
 flux check --pre
 
 flux bootstrap github \
