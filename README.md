@@ -59,3 +59,5 @@ az keyvault key create --name sops-key --vault-name gitopsdemokeyvaultgirish --p
 az keyvault set-policy --name gitopsdemokeyvaultgirish --resource-group gitops-demo-rg --object-id 6e4b8b45-8e8f-42e7-87ed-0e89e0500189 --key-permissions decrypt encrypt
 
 https://gitopsdemokeyvaultgirish.vault.azure.net/keys/sops-key/4678939e609b4cf0bf1381140b248e35
+
+https://www.thorsten-hans.com/encrypt-your-kubernetes-secrets-with-mozilla-sops/
