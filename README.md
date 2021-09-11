@@ -61,3 +61,15 @@ az keyvault set-policy --name gitopsdemokeyvaultgirish --resource-group gitops-d
 https://gitopsdemokeyvaultgirish.vault.azure.net/keys/sops-key/4678939e609b4cf0bf1381140b248e35
 
 https://www.thorsten-hans.com/encrypt-your-kubernetes-secrets-with-mozilla-sops/
+
+
+
+-----------------------------------------------------------------------------
+
+export GITHUB_TOKEN=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
+
+flux bootstrap github \
+--owner girishgouda \
+--branch=main \
+--path=./clusters/gitopsdemocluster \
+--repository fluxbootstrap
