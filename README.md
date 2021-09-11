@@ -66,7 +66,7 @@ https://www.thorsten-hans.com/encrypt-your-kubernetes-secrets-with-mozilla-sops/
 
 -----------------------------------------------------------------------------
 
-export GITHUB_TOKEN=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
+export GITHUB_TOKEN=xxxx
 
 flux bootstrap github \
 --owner girishgouda \
