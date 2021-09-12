@@ -6,6 +6,8 @@ export CLUSTER_NAME=gitopsdemocluster
 export GITHUB_USER=girishgouda
 export GITHUB_REPO=fluxbootstrap
 
+kubectl create ns flux-system
+
 
 flux bootstrap github \
 --owner=$GITHUB_USER \
