@@ -4,7 +4,7 @@ metadata:
   name: kustomize-controller
   namespace: flux-system
 resources:
-- flux-system/gotk-components.yaml
-- flux-system/gotk-sync.yaml
+- gotk-components.yaml
+- gotk-sync.yaml
 patchesStrategicMerge:
 - sops-kustomize-patch.yaml
