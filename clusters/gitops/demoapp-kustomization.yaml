@@ -12,5 +12,4 @@ spec:
     name: flux-system
   validation: client
   decryption:
-    provider: sops​
-
+    provider: sops
