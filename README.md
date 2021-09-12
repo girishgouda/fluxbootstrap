@@ -130,3 +130,44 @@ spec:
     nmi:
       allowNetworkPluginKubenet: true
 EOF
+
+
+az identity create -n SopsDecryptorIdentity -g $RESOURCE_GROUP_NAME -l $LOCATION
+
+CLIENT_ID=$(az identity show -n SopsDecryptorIdentity -g $RESOURCE_GROUP_NAME -o tsv --query "clientId")
+OBJECT_ID=$(az identity show -n SopsDecryptorIdentity -g $RESOURCE_GROUP_NAME -o tsv --query "principalId")
+RESOURCE_ID=$(az identity show -n SopsDecryptorIdentity -g $RESOURCE_GROUP_NAME -o tsv --query "id")
+
+export KEY_VAULT_NAME=vaultgitops3
+
+az keyvault create --name $KEY_VAULT_NAME --resource-group "gitops-demo" --location "southeastasia"
+
+az keyvault key create --name sops-key --vault-name $KEY_VAULT_NAME --protection software --ops encrypt decrypt
+
+az keyvault set-policy --name $KEY_VAULT_NAME --resource-group $RESOURCE_GROUP_NAME --object-id $OBJECT_ID --key-permissions encrypt decrypt​
+
+az keyvault key show --name sops-key --vault-name $KEY_VAULT_NAME --query key.kid
+
+"https://vaultgitops3.vault.azure.net/keys/sops-key/3809539ab2504ecca7c1c6dfb671ff94"
+
+cat > ./clusters/gitops/sops-identity.yaml <<EOF
+---
+apiVersion: aadpodidentity.k8s.io/v1
+kind: AzureIdentity
+metadata:
+  name: sops-akv-decryptor
+  namespace: flux-system
+spec:
+  clientID: 605bf726-78e7-4ab0-b3fe-182a6b8d4db8
+  resourceID: /subscriptions/526be93c-8b93-4ca3-a34f-559d10cdcef4/resourcegroups/gitops-demo/providers/Microsoft.ManagedIdentity/userAssignedIdentities/SopsDecryptorIdentity
+  type: 0 # user-managed identity
+---
+apiVersion: aadpodidentity.k8s.io/v1
+kind: AzureIdentityBinding
+metadata:
+  name: sops-akv-decryptor-binding
+  namespace: flux-system
+spec:
+  azureIdentity: sops-akv-decryptor
+  selector: sops-akv-decryptor  # kustomize-controller label will match this name
+EOF​
