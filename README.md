@@ -84,3 +84,49 @@ spec:
       targetPort: 80
 EOF
 
+
+RESOURCE_GROUP_ID=$(az group show -n $RESOURCE_GROUP_NAME -o tsv --query id)
+AKS_RESOURCE_GROUP_NAME=$(az aks show -g $RESOURCE_GROUP_NAME -n $CLUSTER_NAME -o tsv --query nodeResourceGroup)
+AKS_RESOURCE_GROUP_ID=$(az group show -n gitops-demo -o tsv --query id)
+KUBELET_CLIENT_ID=$(az aks show -g $RESOURCE_GROUP_NAME -n $CLUSTER_NAME -o tsv --query identityProfile.kubeletidentity.clientId)
+
+az role assignment create --role "Virtual Machine Contributor" --assignee 1c0d298d-03a0-4909-aadc-57ecf3b4f062 --scope /subscriptions/526be93c-8b93-4ca3-a34f-559d10cdcef4/resourceGroups/gitops-demo
+
+az role assignment create --role "Managed Identity Operator" --assignee 1c0d298d-03a0-4909-aadc-57ecf3b4f062 --scope /subscriptions/526be93c-8b93-4ca3-a34f-559d10cdcef4/resourceGroups/gitops-demo
+
+cat > ./manifests/aad-pod-identity.yaml <<EOF
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aad-pod-identity
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: HelmRepository
+metadata:
+  name: aad-pod-identity
+  namespace: aad-pod-identity
+spec:
+  url: https://raw.githubusercontent.com/Azure/aad-pod-identity/master/charts
+  interval: 10m
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: aad-pod-identity
+  namespace: aad-pod-identity
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: aad-pod-identity
+      version: 4.0.0
+      sourceRef:
+        kind: HelmRepository
+        name: aad-pod-identity
+        namespace: aad-pod-identity
+      interval: 1m
+  values:
+    nmi:
+      allowNetworkPluginKubenet: true
+EOF
