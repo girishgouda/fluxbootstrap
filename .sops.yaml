@@ -1,4 +1,4 @@
 creation_rules:
   - path_regex: .*.yaml
     encrypted_regex: ^(data|stringData)$
-    azure_keyvault: https://gitopsdemokeyvaultgirish.vault.azure.net/keys/sops-key/4678939e609b4cf0bf1381140b248e35
+    azure_keyvault: "https://vaultgitops3.vault.azure.net/keys/sops-key/3809539ab2504ecca7c1c6dfb671ff94"
